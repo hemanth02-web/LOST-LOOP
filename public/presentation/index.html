@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LostLoop – Pitch Deck</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+<div id="frame">
+<div class="bg3d" aria-hidden="true">
+  <div class="cube" style="--s:70px;--x:8%;--y:18%;--t:26s;--c:#3b5bff"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="cube" style="--s:46px;--x:88%;--y:14%;--t:21s;--c:#17a673"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="cube" style="--s:96px;--x:82%;--y:68%;--t:32s;--c:#8a5cff"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="cube" style="--s:38px;--x:14%;--y:74%;--t:19s;--c:#f5a524"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="cube" style="--s:54px;--x:48%;--y:86%;--t:28s;--c:#e5484d"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</div>
+
+<header class="top">
+  <div class="brand"><span class="logo">⌕</span> LostLoop</div>
+  <div class="ctl">
+    <button class="btn" id="themeBtn" aria-label="Toggle dark or light mode">☾ Dark</button>
+    <button class="btn" id="fsBtn" aria-label="Fullscreen">⛶ Full screen</button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+<section class="slide" data-title="Title">
+  <div class="hero"><div>
+    <div class="eyebrow">CS1385 · Web &amp; UX Design · Group 9</div>
+    <h1><span class="grad">LostLoop</span></h1>
+    <p class="lead">Campus Lost &amp; Found Portal</p>
+    <div class="team">
+  <div class="member tilt"><div class="av" style="background:#3b5bff">AP</div><div><b>Aromal P</b><span>2RUA26BCA0026</span></div></div>
+  <div class="member tilt"><div class="av" style="background:#17a673">SB</div><div><b>C D Sarthak Belliappa</b><span>2RUA26BCA0032</span></div></div>
+  <div class="member tilt"><div class="av" style="background:#8a5cff">MS</div><div><b>Mary Sherin T G</b><span>2RUA26BCA0061</span></div></div>
+  <div class="member tilt"><div class="av" style="background:#f5a524">HS</div><div><b>Hemanth Suresh</b><span>2RUA26BCA0005</span></div></div>
+</div>
+    <p class="meta">BCA Section A · RV University, Mysuru · Faculty: <b>Ms. Chaitra M</b></p>
+  </div>
+  <div class="orb"><div class="ring" style="--d:380px;--t:14s"></div><div class="ring" style="--d:300px;--t:9s;border-color:var(--green)"></div><div class="ring" style="--d:220px;--t:6s;border-color:var(--violet)"></div><div class="core">🔍</div></div></div>
+</section>
+
+<section class="slide" data-title="Problem">
+  <div class="eyebrow">The problem</div>
+  <h2>Lost items rarely find their way back</h2>
+  <div class="row c3">
+    <div class="card tilt"><div class="ico r">💬</div><h3>Scattered</h3><p>Chat messages get buried in hours.</p></div>
+    <div class="card tilt"><div class="ico a">📍</div><h3>No single place</h3><p>No official board for finders or owners.</p></div>
+    <div class="card tilt"><div class="ico">🔒</div><h3>No verification</h3><p>Items can reach the wrong person.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Solution">
+  <div class="eyebrow">Our solution</div>
+  <h2>One <span class="grad">verified</span> campus board</h2>
+  <div class="row c4">
+    <div class="card tilt"><div class="ico">📝</div><h3>Report</h3><p>Lost or found, with a photo.</p></div>
+    <div class="card tilt"><div class="ico g">🔎</div><h3>Search</h3><p>Filter by type, place, category.</p></div>
+    <div class="card tilt"><div class="ico a">🤝</div><h3>Match</h3><p>Smart match score suggests pairs.</p></div>
+    <div class="card tilt"><div class="ico r">🛡️</div><h3>Verify</h3><p>Owner proves it with a secret answer.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="How it works">
+  <div class="eyebrow">How it works</div>
+  <h2>Three steps to get it back</h2>
+  <div class="row c3">
+    <div class="flip"><div class="in"><div class="face"><div class="num">1</div><h3>Post</h3></div><div class="face back"><p>Finder posts the item with a hidden verification question.</p></div></div></div>
+    <div class="flip"><div class="in"><div class="face"><div class="num">2</div><h3>Claim</h3></div><div class="face back"><p>Owner finds it and answers the question. Five wrong tries lock the claim.</p></div></div></div>
+    <div class="flip"><div class="in"><div class="face"><div class="num">3</div><h3>Return</h3></div><div class="face back"><p>Correct answer reveals contact details. Item is marked returned.</p></div></div></div>
+  </div>
+  <p class="hint">Hover or tap a card to flip it</p>
+</section>
+
+<section class="slide" data-title="Architecture">
+  <div class="eyebrow">Architecture</div>
+  <h2>How one request <span class="grad">travels</span></h2>
+  <div class="flow" id="flow">
+    <button class="node on" data-i="0"><span class="ni">🌐</span><b>Browser</b><small>HTML · CSS · JS</small></button>
+    <div class="wire"><i></i><i></i><i></i></div>
+    <button class="node" data-i="1"><span class="ni">⚙️</span><b>Server</b><small>Node · Express</small></button>
+    <div class="wire"><i></i><i></i><i></i></div>
+    <button class="node" data-i="2"><span class="ni">🗄️</span><b>Database</b><small>SQLite</small></button>
+  </div>
+  <div class="flowinfo">
+    <div class="sbadge" id="fiNum">1</div>
+    <div><h3 id="fiT"></h3><p id="fiP"></p></div>
+  </div>
+  <p class="hint">Click a block, or just watch it cycle</p>
+</section>
+
+<section class="slide" data-title="App screens">
+  <div class="eyebrow">The live app</div>
+  <h2 class="h2s">Six screens, <span class="grad">one tap</span> apart</h2>
+  <div class="gallery" id="gallery">
+    <div class="gtabs"><button class="gtab on" data-i="0"><span>🏠</span><b>Home</b></button><button class="gtab" data-i="1"><span>🔎</span><b>Browse</b></button><button class="gtab" data-i="2"><span>🔑</span><b>Log in</b></button><button class="gtab" data-i="3"><span>🛡️</span><b>Claim</b></button><button class="gtab" data-i="4"><span>📋</span><b>My reports</b></button><button class="gtab" data-i="5"><span>🗺️</span><b>Campus map</b></button><div class="gcap"><h3 id="gT">Home</h3><p id="gD"></p></div></div>
+    <div class="gview">
+      <div class="browser"><div class="bbar"><i></i><i></i><i></i><span>lostloop.onrender.com</span></div><div class="gimgs"><img class="gimg on" src="img/home.jpg" alt="Home screen" data-t="Home" data-d="Live stats and the latest items on the board."><img class="gimg" src="img/browse.jpg" alt="Browse screen" data-t="Browse" data-d="Search, filter by type, category and place."><img class="gimg" src="img/login.jpg" alt="Log in screen" data-t="Log in" data-d="Secure sign in and sign up for campus members."><img class="gimg" src="img/claim.jpg" alt="Claim screen" data-t="Claim" data-d="Prove ownership with the secret question."><img class="gimg" src="img/owner.jpg" alt="My reports screen" data-t="My reports" data-d="Smart match suggestions and claim management."><img class="gimg" src="img/map.jpg" alt="Campus map screen" data-t="Campus map" data-d="Every item pinned to where it was found."></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Designed in Figma">
+  <div class="eyebrow">UI design</div>
+  <h2>Designed in <span class="grad">Figma</span></h2>
+  <div class="shots">
+    <figure class="shot"><img src="img/figma-v2-system.jpg" alt="Figma v2 design system and components"><figcaption>v2 · Design system</figcaption></figure>
+    <figure class="shot"><img src="img/figma-v2-home.jpg" alt="Figma v2 home screen"><figcaption>v2 · Final Home</figcaption></figure>
+    <figure class="shot"><img src="img/figma-home.jpg" alt="Figma v1 first draft of the home screen"><figcaption>v1 · First draft</figcaption></figure>
+  </div>
+  <div class="pills big"><span class="pill">Light &amp; dark tokens</span><span class="pill">Reusable components</span><span class="pill">Inter type scale</span><span class="pill">v1 → v2 iteration</span></div>
+</section>
+
+<section class="slide" data-title="Tools used">
+  <div class="eyebrow">Tools used</div>
+  <h2>Our toolbox</h2>
+  <div class="tools"><div class="tool tilt"><div class="ti"><img src="img/tools/figma.svg" alt=""></div><b>Figma</b><span>UI design</span></div><div class="tool tilt"><div class="ti"><img src="img/tools/vscode.svg" alt=""></div><b>VS Code</b><span>Code editor</span></div><div class="tool tilt"><div class="ti"><img src="img/tools/html5.svg" alt=""><img src="img/tools/css3.svg" alt=""><img src="img/tools/js.svg" alt=""></div><b>HTML · CSS · JS</b><span>Front end</span></div><div class="tool tilt"><div class="ti"><img src="img/tools/node.svg" alt=""><img src="img/tools/express.svg" alt=""></div><b>Node.js · Express</b><span>Server</span></div><div class="tool tilt"><div class="ti"><img src="img/tools/sqlite.svg" alt=""></div><b>SQLite</b><span>Database</span></div><div class="tool tilt"><div class="ti"><img src="img/tools/playwright.svg" alt=""></div><b>Playwright</b><span>Testing</span></div><div class="tool tilt"><div class="ti"><img src="img/tools/github.svg" alt=""></div><b>GitHub</b><span>Version control</span></div><div class="tool tilt"><div class="ti"><img src="img/tools/render.svg" alt=""></div><b>Render</b><span>Hosting</span></div></div>
+</section>
+
+<section class="slide" data-title="Security">
+  <div class="eyebrow">Security</div>
+  <h2>Safe by design, on the server</h2>
+  <div class="row c2">
+    <div class="card tilt"><div class="ico g">🔑</div><h3>Hashed passwords</h3><p>bcrypt + httpOnly JWT cookie.</p></div>
+    <div class="card tilt"><div class="ico r">🙈</div><h3>Hidden contacts</h3><p>Shown only after a correct answer.</p></div>
+    <div class="card tilt"><div class="ico a">⛔</div><h3>Lockout</h3><p>Five wrong answers and the claim locks.</p></div>
+    <div class="card tilt"><div class="ico">🧱</div><h3>Hardened</h3><p>Helmet CSP, rate limits, upload checks.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Matching and testing">
+  <div class="eyebrow">Smart matching · Tested</div>
+  <h2>Ranked matches, proven by tests</h2>
+  <div class="split">
+    <div>
+      <div class="bar"><div class="lab"><span>Same category</span><b>+50</b></div><div class="track"><div class="fill" style="--w:100%"></div></div></div>
+      <div class="bar"><div class="lab"><span>Same place</span><b>+25</b></div><div class="track"><div class="fill" style="--w:50%"></div></div></div>
+      <div class="bar"><div class="lab"><span>Shared keywords</span><b>+18</b></div><div class="track"><div class="fill" style="--w:36%"></div></div></div>
+      <div class="bar"><div class="lab"><span>Dates within 3 days</span><b>+7</b></div><div class="track"><div class="fill" style="--w:14%"></div></div></div>
+    </div>
+    <div class="row c2 stats">
+      <div class="card tilt stat"><b>16</b><span>API tests passed</span></div>
+      <div class="card tilt stat"><b>27</b><span>browser checks passed</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide thanks" data-title="Thank you">
+  <div class="eyebrow">Lost something? Let's bring it back.</div>
+  <h1><span class="grad">Thank you</span></h1>
+  <p class="lead">LostLoop · Group 9 · BCA Section A</p>
+  <div class="team">
+  <div class="member tilt"><div class="av" style="background:#3b5bff">AP</div><div><b>Aromal P</b><span>2RUA26BCA0026</span></div></div>
+  <div class="member tilt"><div class="av" style="background:#17a673">SB</div><div><b>C D Sarthak Belliappa</b><span>2RUA26BCA0032</span></div></div>
+  <div class="member tilt"><div class="av" style="background:#8a5cff">MS</div><div><b>Mary Sherin T G</b><span>2RUA26BCA0061</span></div></div>
+  <div class="member tilt"><div class="av" style="background:#f5a524">HS</div><div><b>Hemanth Suresh</b><span>2RUA26BCA0005</span></div></div>
+</div>
+  <p class="meta">RV University, Mysuru · Faculty: <b>Ms. Chaitra M</b></p>
+</section>
+
+</main>
+
+<nav class="nav" aria-label="Slide navigation">
+  <button class="btn" id="prev" aria-label="Previous slide">‹</button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="count"></span>
+  <button class="btn" id="next" aria-label="Next slide">›</button>
+</nav>
+</div>
+<script src="deck.js"></script>
+</body>
+</html>

@@ -34,6 +34,22 @@
   function isEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
   function isPhone(s) { return /^\d{10,12}$/.test(String(s).replace(/[\s+\-()]/g, '')); }
 
+  /* line icons, same set as the Figma components (icon/*) */
+  var ICONS = {
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    pin: '<path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+    calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    arrow: '<path d="M5 12h14M12 5l7 7-7 7"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.7 9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+    sparkle: '<path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    tag: '<path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1"/>'
+  };
+  function ic(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[n] + '</svg>'; }
+
   function toast(msg, kind) {
     var t = document.createElement('div');
     t.className = 'toast ' + (kind || '');
@@ -68,15 +84,15 @@
   function errorHTML(e) { return '<div class="wrap"><div class="banner" role="alert">' + esc(e.message || 'Something went wrong.') + '</div></div>'; }
 
   /* ---------- card ---------- */
-  function cardHTML(it) {
+  function cardHTML(it, extra) {
     var c = cat(it.category);
     var img = it.photo ? '<img src="' + esc(it.photo) + '" alt="Photo of ' + esc(it.title) + '" loading="lazy">' : '<span aria-hidden="true">' + c.icon + '</span>';
     var tag = it.status === 'returned' ? '<span class="badge ret">Returned ✓</span>' : (it.mine ? '<span class="badge mine">Your report</span>' : '');
-    return '<button type="button" class="card" data-id="' + it.id + '" aria-label="' + esc(it.type + ': ' + it.title + ', ' + it.location) + '">' +
+    return '<button type="button" class="card' + (extra ? ' ' + extra : '') + '" data-id="' + it.id + '" aria-label="' + esc(it.type + ': ' + it.title + ', ' + it.location) + '">' +
       '<div class="card-img" style="background:' + c.tint + '"><span class="badge ' + esc(it.type) + '">' + esc(it.type) + '</span>' + tag + img + '</div>' +
       '<div class="card-body"><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p>' +
-      '<div class="meta"><span>📍 ' + esc(it.location) + '</span><span>🗓 ' + fmtDate(it.date) + '</span>' +
-      '<span class="role ' + esc(it.role) + '">' + esc(it.role) + '</span></div></div></button>';
+      '<div class="meta"><span>' + ic('pin') + esc(it.location) + '</span><span>' + ic('calendar') + fmtDate(it.date) + '</span></div></div>' +
+      '<div class="card-foot"><span class="role ' + esc(it.role) + '">' + esc(it.role) + '</span><span class="go">View details' + ic('arrow') + '</span></div></button>';
   }
 
   /* ---------- views ---------- */
@@ -87,27 +103,31 @@
     return Promise.all([api('GET', '/api/stats'), api('GET', '/api/items?limit=6')]).then(function (r) {
       if (token !== routeToken) return;
       var st = r[0], recent = r[1].items;
+      var stack = recent.length >= 3 ? '<div class="stack" aria-label="Latest reports">' + cardHTML(recent[2], 's1') + cardHTML(recent[1], 's2') + cardHTML(recent[0], 's3') +
+        '<div class="float">' + ic('check') + st.returned + ' items reunited with owners</div></div>' : '<div></div>';
       el.innerHTML = '<div class="wrap">' +
-        '<div class="hero"><div><span class="eyebrow">Your campus. Your community.</span>' +
-        '<h1>Lost something? <em>Let\'s bring it back.</em></h1>' +
-        '<p class="lead">LostLoop is one central place for RV University to report lost belongings, post what you found and reconnect items with their owners, safely.</p>' +
-        '<div class="hero-cta"><button class="btn btn-primary" data-open-report="lost">😟 I lost something</button>' +
-        '<button class="btn btn-ghost" data-open-report="found">😊 I found something</button></div>' +
-        '<p class="muted" style="font-size:.9rem;margin:0">Free for students, faculty and staff. Sign up with your email to post.</p></div>' +
-        '<div class="hero-art"><img src="assets/hero.png" alt="Two students returning a lost backpack on campus">' +
-        '<div class="float f1">🔑 Keys returned today</div><div class="float f2">✅ ' + st.returned + ' items reunited</div></div></div>' +
+        '<section class="hero"><div>' +
+        '<span class="pill-dark">RV University · Campus Lost &amp; Found</span>' +
+        '<h1 class="h-display">Lost something? <em>Let\'s bring it back.</em></h1>' +
+        '<p class="lead">One trusted place for students, faculty and staff to report lost belongings, post what they found and get items home, safely.</p>' +
+        '<form class="hero-search" id="heroSearch" role="search">' + ic('search') +
+        '<input id="heroQ" type="text" placeholder="Search keys, ID cards, bags, earbuds…" aria-label="Search lost and found items" autocomplete="off">' +
+        '<button class="btn btn-primary" type="submit">Search</button></form>' +
+        '<div class="hero-cta"><button class="btn btn-primary" data-open-report="lost">I lost something</button>' +
+        '<button class="btn btn-outline-light" data-open-report="found">I found something</button></div></div>' + stack + '</section>' +
         '<div class="stats" aria-label="Live statistics">' +
-        '<div class="stat"><b data-count="' + st.active + '">0</b><span>Active listings</span></div>' +
-        '<div class="stat s-lost"><b data-count="' + st.lost + '">0</b><span>Items reported lost</span></div>' +
-        '<div class="stat s-found"><b data-count="' + st.found + '">0</b><span>Items found</span></div>' +
-        '<div class="stat s-ret"><b data-count="' + st.returned + '">0</b><span>Returned to owners</span></div></div>' +
-        '<div class="section-head"><h2>Latest on the board</h2><a href="#/browse">See all items →</a></div>' +
-        '<div class="grid">' + (recent.map(cardHTML).join('') || '<div class="empty" style="grid-column:1/-1">Nothing reported yet. Be the first!</div>') + '</div>' +
-        '<div class="section-head"><h2>How LostLoop works</h2><a href="#/how">Learn more →</a></div>' +
-        '<div class="steps">' +
-        '<div class="step"><div class="num">1</div><h3>Post a report</h3><p>Log in, then tell us what was lost or found, where and when. Add a photo if you have one.</p></div>' +
-        '<div class="step"><div class="num">2</div><h3>Search &amp; match</h3><p>Browse the board or open an item to see possible matches ranked by category, place and keywords.</p></div>' +
-        '<div class="step"><div class="num">3</div><h3>Reconnect safely</h3><p>Verify the owner, meet in a public campus spot and mark the item returned.</p></div></div></div>';
+        '<div class="stat"><i>' + ic('sparkle') + '</i><div><b data-count="' + st.active + '">0</b><span>Active listings</span></div></div>' +
+        '<div class="stat s-lost"><i>' + ic('search') + '</i><div><b data-count="' + st.lost + '">0</b><span>Reported lost</span></div></div>' +
+        '<div class="stat s-found"><i>' + ic('pin') + '</i><div><b data-count="' + st.found + '">0</b><span>Found on campus</span></div></div>' +
+        '<div class="stat s-ret"><i>' + ic('check') + '</i><div><b data-count="' + st.returned + '">0</b><span>Returned to owners</span></div></div></div>' +
+        '<section class="section"><div class="section-head"><h2>Browse by category</h2><a href="#/browse">See all items →</a></div><div class="cats">' +
+        CATS.map(function (c) { return '<button type="button" class="cat-tile" data-go-cat="' + c.id + '"><span style="background:' + c.tint + '" aria-hidden="true">' + c.icon + '</span>' + esc(c.label) + '</button>'; }).join('') + '</div></section>' +
+        '<section class="section"><div class="section-head"><h2>Latest on the board</h2><a href="#/browse">See all items →</a></div>' +
+        '<div class="grid">' + (recent.map(function (x) { return cardHTML(x); }).join('') || '<div class="empty" style="grid-column:1/-1">Nothing reported yet. Be the first!</div>') + '</div></section>' +
+        '<section class="section band" aria-label="How LostLoop works">' +
+        '<div class="band-step"><div class="num">1</div><div><h3>Post a report</h3><p>Say what was lost or found, where and when. Add a photo.</p></div></div>' +
+        '<div class="band-step"><div class="num">2</div><div><h3>Get matched</h3><p>The server ranks possible matches by category, place and keywords.</p></div></div>' +
+        '<div class="band-step"><div class="num">3</div><div><h3>Verify &amp; return</h3><p>Answer the secret question, meet safely, mark it returned.</p></div></div></section></div>';
       animateCounts(el);
     });
   };
@@ -128,19 +148,19 @@
   views.browse = function (el) {
     if (!browseBuilt) {
       el.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Campus item board</span><h1>Browse lost &amp; found items</h1>' +
-        '<p>Search by item, place or category. Results come straight from the LostLoop database.</p></div>' +
-        '<div class="filters"><div class="f-row">' +
-        '<div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
-        '<input id="q" type="text" placeholder="Search items, places, categories…" aria-label="Search items" autocomplete="off"></div>' +
-        '<div class="tabs" role="group" aria-label="Item type">' +
+        '<p>Search by item, place or category. Every result comes straight from the LostLoop database.</p></div>' +
+        '<div class="browse"><aside class="filters" aria-label="Filters">' +
+        '<div class="search">' + ic('search') + '<input id="q" type="text" placeholder="Search items, places…" aria-label="Search items" autocomplete="off"></div>' +
+        '<div class="f-group"><span class="f-label">Type</span><div class="tabs" role="group" aria-label="Item type">' +
         '<button type="button" data-tab="all" aria-pressed="true">All</button><button type="button" data-tab="lost" aria-pressed="false">Lost</button><button type="button" data-tab="found" aria-pressed="false">Found</button></div></div>' +
-        '<div class="chips" role="group" aria-label="Category" id="chips"></div>' +
-        '<div class="f-row"><select id="fLoc" aria-label="Location"></select>' +
-        '<select id="fRole" aria-label="Posted by"><option value="all">Students, Faculty &amp; Staff</option>' + ROLES.map(function (r) { return '<option>' + r + '</option>'; }).join('') + '</select>' +
-        '<select id="fSort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">Name A–Z</option></select>' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="clearF">Clear filters</button></div></div>' +
-        '<div class="count-line"><span id="countLine"></span></div><div id="boardBanner"></div><div class="grid" id="boardGrid"></div></div>';
-      $('#chips').innerHTML = '<button type="button" class="chip" data-cat="all" aria-pressed="true">All categories</button>' +
+        '<div class="f-group"><span class="f-label">Category</span><div class="chips" role="group" aria-label="Category" id="chips"></div></div>' +
+        '<div class="f-group"><label class="f-label" for="fLoc">Location</label><select id="fLoc"></select></div>' +
+        '<div class="f-group"><label class="f-label" for="fRole">Posted by</label><select id="fRole"><option value="all">Students, Faculty &amp; Staff</option>' + ROLES.map(function (r) { return '<option>' + r + '</option>'; }).join('') + '</select></div>' +
+        '<div class="f-group"><label class="f-label" for="fSort">Sort by</label><select id="fSort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">Name A–Z</option></select></div>' +
+        '<button type="button" class="btn btn-ghost btn-sm btn-block" id="clearF">Clear filters</button></aside>' +
+        '<div class="results"><div class="count-line"><span id="countLine"></span><span class="legend"><span class="badge lost inline">Lost</span><span class="badge found inline">Found</span></span></div>' +
+        '<div id="boardBanner"></div><div class="grid" id="boardGrid"></div></div></div></div>';
+      $('#chips').innerHTML = '<button type="button" class="chip" data-cat="all" aria-pressed="true">All</button>' +
         CATS.map(function (c) { return '<button type="button" class="chip" data-cat="' + c.id + '" aria-pressed="false">' + c.icon + ' ' + c.label + '</button>'; }).join('');
       $('#fLoc').innerHTML = '<option value="all">All campus locations</option>' + LOCS.map(function (l) { return '<option>' + esc(l.id) + '</option>'; }).join('');
       browseBuilt = true;
@@ -168,7 +188,7 @@
       $('#boardBanner').innerHTML = '';
       var list = r[0].items;
       $('#countLine').textContent = 'Showing ' + list.length + ' of ' + r[1].active + ' active listings';
-      $('#boardGrid').innerHTML = list.length ? list.map(cardHTML).join('') :
+      $('#boardGrid').innerHTML = list.length ? list.map(function (x) { return cardHTML(x); }).join('') :
         '<div class="empty" style="grid-column:1/-1"><div class="big">🔍</div><h3>No items match these filters</h3><p>Try fewer filters, or report the item so others can find it.</p>' +
         '<button class="btn btn-primary" data-open-report>+ Report an item</button></div>';
     }).catch(function (e) { if (token === boardToken && $('#boardBanner')) $('#boardBanner').innerHTML = '<div class="banner" role="alert">' + esc(e.message) + '</div>'; });
@@ -214,7 +234,7 @@
       el.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Success wall</span><h1>Items that found their way home</h1>' +
         '<p>Every card here is a loop closed. Thank you to the finders and owners who made it happen.</p></div>' +
         '<div class="wall-hero"><b>' + r.total + '</b><div><strong style="font-size:1.2rem">items reunited with their owners</strong><p>Be someone\'s lucky find: if you spot something, post it.</p></div></div>' +
-        '<div class="grid">' + (r.items.map(cardHTML).join('') || '<div class="empty" style="grid-column:1/-1"><div class="big">🎉</div><p>No returns yet. The first one will appear here.</p></div>') + '</div></div>';
+        '<div class="grid">' + (r.items.map(function (x) { return cardHTML(x); }).join('') || '<div class="empty" style="grid-column:1/-1"><div class="big">🎉</div><p>No returns yet. The first one will appear here.</p></div>') + '</div></div>';
     });
   };
 
@@ -229,7 +249,7 @@
       if (token !== routeToken) return;
       el.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">Your account</span><h1>My reports</h1>' +
         '<p>Signed in as <b>' + esc(me.name) + '</b> (' + esc(me.role) + '). Open a report to see claims, mark it returned or delete it.</p></div>' +
-        '<div class="grid">' + (r.items.map(cardHTML).join('') || '<div class="empty" style="grid-column:1/-1"><div class="big">📝</div><p>You have not posted anything yet.</p><button class="btn btn-primary" data-open-report>+ Report an item</button></div>') + '</div></div>';
+        '<div class="grid">' + (r.items.map(function (x) { return cardHTML(x); }).join('') || '<div class="empty" style="grid-column:1/-1"><div class="big">📝</div><p>You have not posted anything yet.</p><button class="btn btn-primary" data-open-report>+ Report an item</button></div>') + '</div></div>';
     });
   };
 
@@ -239,13 +259,13 @@
       '<div class="step"><div class="num">1</div><h3>Post a report</h3><p>Log in, choose <b>I lost something</b> or <b>I found something</b>, pick a category and campus location, add a date, details and an optional photo. The server validates everything before saving it.</p></div>' +
       '<div class="step"><div class="num">2</div><h3>Browse &amp; match</h3><p>Search and filter the board. Opening an item shows <b>possible matches</b> from the opposite side, ranked by the server by category, place, keywords and date.</p></div>' +
       '<div class="step"><div class="num">3</div><h3>Verify &amp; return</h3><p>Claimants answer a verification question set by the finder. The server checks the answer and reveals contact details only after a correct one. The poster then marks the item returned.</p></div></div>' +
-      '<div class="two" style="margin-top:28px"><div class="panel"><h3>🛡️ Safe handover checklist</h3><ul>' +
+      '<div class="two" style="margin-top:28px"><div class="panel"><h3>' + ic('shield') + 'Safe handover checklist</h3><ul>' +
       '<li>Meet in a public campus spot such as the security desk or library counter.</li>' +
       '<li>Ask the owner to describe the item before you show it.</li>' +
       '<li>Do not share OTPs, passwords or card details, ever.</li>' +
       '<li>Hand valuables (ID cards, phones, wallets) to the campus security desk if unsure.</li>' +
       '<li>Mark the item <b>Returned</b> so the board stays accurate.</li></ul></div>' +
-      '<div class="panel"><h3>🔎 How matching works</h3><p class="muted">For every report the server compares it with active reports of the opposite type:</p><ul>' +
+      '<div class="panel"><h3>' + ic('sparkle') + 'How matching works</h3><p class="muted">For every report the server compares it with active reports of the opposite type:</p><ul>' +
       '<li><b>+50</b> same category (required)</li><li><b>+25</b> same campus location</li><li><b>+6 per keyword</b> shared in title and details (max 18)</li><li><b>+7</b> if reported within 3 days of each other</li></ul>' +
       '<p class="muted" style="margin-top:10px">Items scoring 50 or more are suggested.</p></div></div>' +
       '<div class="section-head"><h2>Frequently asked questions</h2></div><div class="faq">' +
@@ -256,7 +276,7 @@
   };
 
   views.about = function (el) {
-    var team = [['Mary Sherin', 'RVUM26BCA034'], ['Hemanth Suresh', 'RVUM26BCA074'], ['Sarthak Belliappa', 'RVUM26BCA064'], ['Aromal P', 'RVUM26BCA072']];
+    var team = [['Aromal P', '2RUA26BCA0026', 'AP'], ['C D Sarthak Belliappa', '2RUA26BCA0032', 'SB'], ['Mary Sherin T G', '2RUA26BCA0061', 'MS'], ['Hemanth Suresh', '2RUA26BCA0005', 'HS']];
     el.innerHTML = '<div class="wrap"><div class="page-head"><span class="eyebrow">About the project</span><h1>Built for RV University</h1>' +
       '<p>LostLoop is the mini project of Group 9 for the course Web &amp; UX Design (CS1385), BCA Section A, RV University, Mysuru, academic year 2026–2027.</p></div>' +
       '<div class="two"><div class="panel"><h3>The problem</h3><p class="muted">ID cards, books, bags, keys and electronics are lost every week in classrooms, the library, the cafeteria and the grounds. When something is found there is no single place to publish it, and word of mouth is easily missed.</p>' +
@@ -264,13 +284,17 @@
       '<img src="assets/team.png" alt="Illustration of a student team working together" style="border-radius:20px;max-height:340px;margin:auto"></div>' +
       '<div class="section-head"><h2>The team</h2></div><div class="team">' +
       team.map(function (t) {
-        var ini = t[0].split(' ').map(function (w) { return w[0]; }).slice(0, 2).join('');
-        return '<div class="member"><div class="avatar" aria-hidden="true">' + ini + '</div><h3>' + t[0] + '</h3><p>' + t[1] + '</p><p>BCA Section A</p></div>';
+        var ini = t[2];
+        return '<div class="member"><div class="avatar" aria-hidden="true">' + ini + '</div><h3>' + t[0] + '</h3><p>BCA Section A</p><span class="usn">' + t[1] + '</span></div>';
       }).join('') + '</div>' +
       '<p class="muted" style="margin-top:14px">Faculty / course coordinator: <b>Ms. Chaitra M</b>, Web &amp; UX Design.</p>' +
       '<div class="section-head"><h2>What is inside</h2></div><div class="two" style="align-items:start">' +
       '<div class="panel"><h3>Features</h3><ul><li>Accounts with hashed passwords and cookie sessions</li><li>Validated reports with photo upload, checked again on the server</li><li>Server-side search, filters and sorting over a SQLite database</li><li>Possible-match engine computed by the API</li><li>Verification question: contact unlocks only after a correct answer</li><li>Owner-only claims list, mark-returned and delete</li><li>Campus map, success wall, dark mode, responsive layout</li></ul></div>' +
-      '<div class="panel"><h3>Built with</h3><div class="tech"><span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Node.js</span><span>Express</span><span>SQLite</span><span>bcrypt</span><span>REST API</span></div>' +
+      '<div class="panel"><h3>Built with &amp; tools used</h3><div class="tools-grid">' +
+      [['figma', 'Figma', 'UI design'], ['vscode', 'VS Code', 'Editor'], ['html5', 'HTML5', 'Markup'], ['css3', 'CSS3', 'Styling'], ['js', 'JavaScript', 'Front end'], ['node', 'Node.js', 'Runtime'], ['express', 'Express', 'REST API'], ['sqlite', 'SQLite', 'Database'], ['playwright', 'Playwright', 'Testing'], ['github', 'GitHub', 'Version control'], ['render', 'Render', 'Hosting']].map(function (t) {
+        return '<div class="tool"><span><img src="assets/tools/' + t[0] + '.svg" alt="" width="28" height="28"></span>' + t[1] + '<small class="muted" style="font-weight:500">' + t[2] + '</small></div>';
+      }).join('') + '</div>' +
+      '<div class="figma-cta"><img src="assets/tools/figma.svg" alt="" width="28" height="28"><div><b>Designed in Figma</b><br><a href="https://www.figma.com/design/UMs9bjTE4GUmgIDrXDdxZp" target="_blank" rel="noopener">Open the LostLoop design file</a></div></div>' +
       '<p class="muted" style="margin-top:14px">Frontend files are served by the same Express server that exposes the <code>/api</code> endpoints.</p>' +
       '<div class="tip"><b>Demo accounts</b> (password <b>Demo@1234</b>): student@rvu.edu.in, faculty@rvu.edu.in, staff@rvu.edu.in.</div></div></div></div>';
   };
@@ -469,41 +493,41 @@
   function renderItem() {
     var it = current.item, matches = current.matches, c = cat(it.category), owner = it.mine || (me && me.isAdmin);
     var img = it.photo ? '<img src="' + esc(it.photo) + '" alt="Photo of ' + esc(it.title) + '">' : '<span aria-hidden="true">' + c.icon + '</span>';
-    var html = '<div class="d-hero" style="background:' + c.tint + '">' + img +
-      '<button type="button" class="icon-btn d-close" data-close aria-label="Close">✕</button></div>' +
-      '<div class="d-main"><div><span class="badge ' + esc(it.type) + '" style="position:static;display:inline-block">' + esc(it.type) + '</span>' +
-      (it.status === 'returned' ? ' <span class="badge ret" style="position:static;display:inline-block">Returned ✓</span>' : '') +
-      (it.mine ? ' <span class="badge mine" style="position:static;display:inline-block">Your report</span>' : '') + '</div>' +
-      '<h2 id="itemTitle">' + esc(it.title) + '</h2><p style="margin:0">' + esc(it.desc) + '</p>' +
+    var html = '<button type="button" class="icon-btn d-close" data-close aria-label="Close">' + ic('x') + '</button>' +
+      '<div class="d-top"><div class="d-media" style="background:' + c.tint + '">' + img + '</div>' +
+      '<div class="d-info"><div class="badges"><span class="badge inline ' + esc(it.type) + '">' + esc(it.type) + '</span>' +
+      (it.status === 'returned' ? '<span class="badge inline ret">Returned ✓</span>' : '') +
+      (it.mine ? '<span class="badge inline mine">Your report</span>' : '') + '</div>' +
+      '<h2 id="itemTitle">' + esc(it.title) + '</h2><p>' + esc(it.desc) + '</p>' +
       '<dl class="facts"><dt>Category</dt><dd>' + c.icon + ' ' + esc(c.label) + '</dd>' +
-      '<dt>' + (it.type === 'lost' ? 'Lost at' : 'Found at') + '</dt><dd>📍 ' + esc(it.location) + '</dd>' +
-      '<dt>Date</dt><dd>' + fmtDate(it.date) + '</dd>' +
-      '<dt>Posted by</dt><dd>' + esc(it.name) + ' <span class="role ' + esc(it.role) + '">' + esc(it.role) + '</span> · ' + ago(it.createdAt) + '</dd>' +
-      '<dt>Contact</dt><dd>' + (it.contact ? '<b>' + esc(it.contact) + '</b>' : '<span class="muted">🔒 Hidden until a claim is verified</span>') + '</dd></dl></div>';
+      '<dt>' + (it.type === 'lost' ? 'Lost at' : 'Found at') + '</dt><dd>' + ic('pin') + esc(it.location) + '</dd>' +
+      '<dt>Date</dt><dd>' + ic('calendar') + fmtDate(it.date) + '</dd>' +
+      '<dt>Posted by</dt><dd>' + esc(it.name) + ' <span class="role ' + esc(it.role) + '">' + esc(it.role) + '</span><span class="muted" style="font-weight:500">· ' + ago(it.createdAt) + '</span></dd>' +
+      '<dt>Contact</dt><dd>' + (it.contact ? esc(it.contact) : '<span class="locked">' + ic('lock') + ' Hidden until a claim is verified</span>') + '</dd></dl></div></div>';
 
     if (it.status === 'active') {
-      html += '<div class="d-sec"><h3>✨ Possible matches</h3>' +
+      html += '<div class="d-sec"><h3>' + ic('sparkle') + 'Possible matches</h3>' +
         (matches.length ? matches.map(function (x) {
           var cc = cat(x.item.category);
-          return '<button type="button" class="match" data-id="' + x.item.id + '"><span class="em">' + cc.icon + '</span><span><b>' + esc(x.item.title) + '</b>' +
+          return '<button type="button" class="match" data-id="' + x.item.id + '"><span class="em" style="background:' + cc.tint + '">' + cc.icon + '</span><span><b>' + esc(x.item.title) + '</b>' +
             (x.same ? '<span class="same">Same place</span>' : '') + '<small>' + esc(x.item.type) + ' · ' + esc(x.item.location) + ' · ' + esc(x.reasons.join(', ')) + '</small></span><span class="sc">' + x.score + '% match</span></button>';
         }).join('') : '<p class="muted" style="margin:0">No matches yet. We will keep looking as new reports arrive.</p>') + '</div>';
 
       if (!it.mine) {
-        html += '<div class="d-sec"><h3>' + (it.type === 'found' ? '🙋 Is this yours?' : '🙌 Did you find this?') + '</h3>';
+        html += '<div class="d-sec"><h3>' + ic('shield') + (it.type === 'found' ? 'Is this yours? Prove it to unlock the contact' : 'Did you find this?') + '</h3>';
         if (it.contact) html += '<div class="tip">Contact unlocked. <b>Safety tip:</b> meet at a public campus spot such as the security desk, and ask the owner to describe the item before handing it over.</div>';
         else if (!me) html += '<p class="muted" style="margin:0">Log in to respond. This lets the poster know who is asking.</p><div><button class="btn btn-primary btn-sm" type="button" data-open-auth="login" data-resume="' + it.id + '">Log in to continue</button></div>';
-        else html += '<form class="inline-form" id="claimForm" novalidate>' +
-          (it.type === 'found' && it.verify ? '<div class="field"><label for="c-ans">Verification: ' + esc(it.verify) + '</label><input id="c-ans" name="answer" type="text" maxlength="60" autocomplete="off"><p class="err" data-err="answer"></p></div>' : '') +
-          '<div class="field"><label for="c-contact">Your email or phone (so the poster can reach you)</label><input id="c-contact" name="contact" type="text" maxlength="60" value="' + esc(me.email) + '"><p class="err" data-err="contact"></p></div>' +
-          '<p class="err" id="claimErr"></p><div><button class="btn btn-primary btn-sm" type="submit">' + (it.type === 'found' ? 'Claim this item' : 'I found this item') + '</button></div></form>';
+        else html += '<form class="inline-form" id="claimForm" novalidate><div class="' + (it.type === 'found' && it.verify ? 'row2' : '') + '">' +
+          (it.type === 'found' && it.verify ? '<div class="field"><label for="c-ans">' + esc(it.verify) + '</label><input id="c-ans" name="answer" type="text" maxlength="60" autocomplete="off" placeholder="Your answer"><p class="err" data-err="answer"></p></div>' : '') +
+          '<div class="field"><label for="c-contact">Your email or phone</label><input id="c-contact" name="contact" type="text" maxlength="60" value="' + esc(me.email) + '"><p class="err" data-err="contact"></p></div></div>' +
+          '<p class="err" id="claimErr"></p><div><button class="btn btn-primary" type="submit">' + (it.type === 'found' ? 'Claim this item' : 'I found this item') + '</button></div></form>';
         html += '</div>';
       }
     }
 
     if (owner) {
       var cl = current.claims || [];
-      html += '<div class="d-sec"><h3>🔐 Manage this report</h3><p class="muted" style="margin:0">' + (it.status === 'active' ? 'Mark it returned once it is back with its owner.' : 'This report is closed.') + '</p>' +
+      html += '<div class="d-sec"><h3>' + ic('lock') + 'Manage this report</h3><p class="muted" style="margin:0">' + (it.status === 'active' ? 'Mark it returned once it is back with its owner.' : 'This report is closed.') + '</p>' +
         '<div class="claims">' + (cl.length ? cl.map(function (k) {
           return '<div class="claim"><b>' + esc(k.name) + '</b> · ' + esc(k.contact) + '<br><span class="muted">' + ago(k.createdAt) + (k.answer ? ' · answered “' + esc(k.answer) + '” ' + (k.matched ? '✅ matches' : '❌ does not match') : (k.matched ? ' · ✅ responded' : '')) + '</span></div>';
         }).join('') : '<div class="claim muted">No claims or responses yet.</div>') + '</div>' +
@@ -554,7 +578,7 @@
   function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
     $('#themeBtn').setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-    var m = $('meta[name=theme-color]'); if (m) m.content = t === 'dark' ? '#0a1424' : '#0f1f3d';
+    var m = $('meta[name=theme-color]'); if (m) m.content = t === 'dark' ? '#070e1e' : '#0b1530';
   }
 
   /* ---------- events ---------- */
@@ -573,6 +597,8 @@
     var at = t.closest('[data-auth-tab]'); if (at) { setAuthMode(at.dataset.authTab); return; }
     var pin = t.closest('.pin[data-loc], .loc-item[data-loc]');
     if (pin) { filters = { tab: 'all', cat: 'all', loc: pin.dataset.loc, role: 'all', q: '', sort: 'new' }; go('#/browse'); return; }
+    var gc = t.closest('[data-go-cat]');
+    if (gc) { filters = { tab: 'all', cat: gc.dataset.goCat, loc: 'all', role: 'all', q: '', sort: 'new' }; go('#/browse'); return; }
     var tab = t.closest('[data-tab]'); if (tab) { filters.tab = tab.dataset.tab; syncFilterUI(); loadBoard(); return; }
     var chip = t.closest('[data-cat]'); if (chip) { filters.cat = chip.dataset.cat; syncFilterUI(); loadBoard(); return; }
     var card = t.closest('.card[data-id], .match[data-id]');
@@ -620,7 +646,10 @@
       });
     }
   });
-  document.addEventListener('submit', function (e) { if (e.target.id === 'claimForm') submitClaim(e); });
+  document.addEventListener('submit', function (e) {
+    if (e.target.id === 'claimForm') submitClaim(e);
+    if (e.target.id === 'heroSearch') { e.preventDefault(); filters = { tab: 'all', cat: 'all', loc: 'all', role: 'all', q: $('#heroQ').value, sort: 'new' }; go('#/browse'); }
+  });
   form.addEventListener('submit', submitReport);
   authForm.addEventListener('submit', submitAuth);
   document.addEventListener('keydown', function (e) {

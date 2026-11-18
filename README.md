@@ -1,6 +1,12 @@
 # LostLoop – Campus Lost & Found Portal
 
 Group 9, BCA Section A, RV University Mysuru (CS1385 Web & UX Design).
+
+Team: Aromal P (2RUA26BCA0026), C D Sarthak Belliappa (2RUA26BCA0032), Mary Sherin T G (2RUA26BCA0061), Hemanth Suresh (2RUA26BCA0005). Faculty: Ms. Chaitra M.
+
+Pitch deck (web presentation): open `public/presentation/index.html`, or /presentation/ on the running site.
+UI design: Figma file https://www.figma.com/design/UMs9bjTE4GUmgIDrXDdxZp (page "v2 – Final UI": light/dark colour tokens, Inter text styles, shadows, reusable components and screens; page "v1 – First draft": early screens). The CSS in `public/css/styles.css` uses the same tokens and component sizes. Extra Figma screens can be generated with the plugin in `LostLoop_Figma_Plugin`.
+
 Full-stack web app: Node.js + Express REST API, SQLite database, bcrypt + JWT cookie login, photo upload, server-side matching.
 
 ## Run it

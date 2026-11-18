@@ -7,6 +7,7 @@
 <meta name="description" content="LostLoop is a campus lost-and-found portal for RV University, Mysuru. Report lost items, post found items, search the board and reconnect belongings safely.">
 <meta name="theme-color" content="#0f1f3d">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bff'/%3E%3Cpath d='M20 34a12 12 0 1 1 6 10' fill='none' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M16 44l4-10 10 4' fill='none' stroke='white' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -16,7 +17,7 @@
   <div class="wrap bar">
     <a class="brand" href="#/" aria-label="LostLoop home">
       <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64" width="30" height="30"><rect width="64" height="64" rx="16" fill="currentColor"/><path d="M20 34a12 12 0 1 1 6 10" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M16 44l4-10 10 4" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 64 64" width="34" height="34"><rect width="64" height="64" rx="18" fill="#3B5BFF"/><path d="M20 34a12 12 0 1 1 6 10" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M16 44l4-10 10 4" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
       <span class="brand-name">Lost<b>Loop</b></span>
     </a>
@@ -56,13 +57,11 @@
 <footer class="site-footer">
   <div class="wrap foot">
     <div>
-      <strong>LostLoop</strong> – Campus Lost &amp; Found Portal<br>
-      <span class="muted">CIE-1 Mini Project · Web &amp; UX Design (CS1385) · Group 9 · BCA Section A · RV University, Mysuru</span>
+      <a class="brand" href="#/" aria-label="LostLoop home"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 64 64" width="34" height="34"><rect width="64" height="64" rx="18" fill="#3B5BFF"/><path d="M20 34a12 12 0 1 1 6 10" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M16 44l4-10 10 4" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Lost<b>Loop</b></span></a>
+      <p>Campus Lost &amp; Found Portal · Web &amp; UX Design (CS1385) · Group 9 · BCA Section A · RV University, Mysuru</p>
     </div>
-    <div class="foot-links">
-      <a href="#/browse">Browse</a><a href="#/how">How it works</a><a href="#/about">About</a>
-      <span class="muted" id="apiStatus">Connecting…</span>
-    </div>
+    <div class="foot-col"><h4>Explore</h4><a href="#/browse">Browse items</a><a href="#/map">Campus map</a><a href="#/returned">Returned</a></div>
+    <div class="foot-col"><h4>Help</h4><a href="#/how">How it works</a><a href="#/about">About</a><span id="apiStatus">Connecting…</span></div>
   </div>
 </footer>
 
@@ -146,6 +145,17 @@
 
 <!-- Log in / sign up dialog -->
 <dialog id="authDlg" aria-labelledby="authTitle">
+ <div class="auth-split">
+  <aside class="auth-aside" aria-hidden="true">
+    <span class="brand"><span class="brand-mark"><svg viewBox="0 0 64 64" width="34" height="34"><rect width="64" height="64" rx="18" fill="#3B5BFF"/><path d="M20 34a12 12 0 1 1 6 10" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M16 44l4-10 10 4" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Lost<b style="color:#9cb0ff">Loop</b></span></span>
+    <h3>Welcome to your campus lost &amp; found.</h3>
+    <p>One account for students, faculty and staff of RV University.</p>
+    <ul>
+      <li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Post lost or found items in seconds</li>
+      <li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Get smart match suggestions</li>
+      <li><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Contact details stay hidden until verified</li>
+    </ul>
+  </aside>
   <form id="authForm" novalidate>
     <div class="dlg-head"><h2 id="authTitle">Log in</h2><button type="button" class="icon-btn" data-close aria-label="Close">✕</button></div>
     <div class="dlg-body">
@@ -162,6 +172,7 @@
     </div>
     <div class="dlg-foot"><button type="button" class="btn btn-ghost" data-close>Cancel</button><button type="submit" class="btn btn-primary" id="authSubmit">Log in</button></div>
   </form>
+ </div>
 </dialog>
 
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
