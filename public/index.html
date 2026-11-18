@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LostLoop – Campus Lost &amp; Found Portal | RV University, Mysuru</title>
+<meta name="description" content="LostLoop is a campus lost-and-found portal for RV University, Mysuru. Report lost items, post found items, search the board and reconnect belongings safely.">
+<meta name="theme-color" content="#0f1f3d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bff'/%3E%3Cpath d='M20 34a12 12 0 1 1 6 10' fill='none' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M16 44l4-10 10 4' fill='none' stroke='white' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header" id="top">
+  <div class="wrap bar">
+    <a class="brand" href="#/" aria-label="LostLoop home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="30" height="30"><rect width="64" height="64" rx="16" fill="currentColor"/><path d="M20 34a12 12 0 1 1 6 10" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M16 44l4-10 10 4" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-name">Lost<b>Loop</b></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#/" data-route="home">Home</a>
+      <a href="#/browse" data-route="browse">Browse items</a>
+      <a href="#/map" data-route="map">Campus map</a>
+      <a href="#/returned" data-route="returned">Returned</a>
+      <a href="#/mine" data-route="mine" id="navMine" hidden>My reports</a>
+      <a href="#/how" data-route="how">How it works</a>
+      <a href="#/about" data-route="about">About</a>
+    </nav>
+    <div class="bar-actions">
+      <div class="auth-area" id="authArea"></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to dark mode" title="Dark / light mode">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="btn btn-primary btn-sm" type="button" data-open-report>+ <span class="hide-xs">Report an item</span><span class="show-xs">Report</span></button>
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <!-- Views are rendered by js/app.js -->
+  <section class="view" id="view-home" hidden></section>
+  <section class="view" id="view-browse" hidden></section>
+  <section class="view" id="view-map" hidden></section>
+  <section class="view" id="view-returned" hidden></section>
+  <section class="view" id="view-mine" hidden></section>
+  <section class="view" id="view-how" hidden></section>
+  <section class="view" id="view-about" hidden></section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap foot">
+    <div>
+      <strong>LostLoop</strong> – Campus Lost &amp; Found Portal<br>
+      <span class="muted">CIE-1 Mini Project · Web &amp; UX Design (CS1385) · Group 9 · BCA Section A · RV University, Mysuru</span>
+    </div>
+    <div class="foot-links">
+      <a href="#/browse">Browse</a><a href="#/how">How it works</a><a href="#/about">About</a>
+      <span class="muted" id="apiStatus">Connecting…</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Report dialog -->
+<dialog id="reportDlg" aria-labelledby="reportTitle">
+  <form id="reportForm" novalidate>
+    <div class="dlg-head">
+      <h2 id="reportTitle">Report an item</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="seg" role="radiogroup" aria-label="Report type">
+        <label class="seg-opt lost"><input type="radio" name="type" value="lost" checked><span>😟 I lost something</span></label>
+        <label class="seg-opt found"><input type="radio" name="type" value="found"><span>😊 I found something</span></label>
+      </div>
+
+      <fieldset class="field">
+        <legend>What kind of item? <em>*</em></legend>
+        <div class="cat-pick" id="catPick"></div>
+        <p class="err" data-err="category"></p>
+      </fieldset>
+
+      <div class="field">
+        <label for="f-title">Item name <em>*</em></label>
+        <input id="f-title" name="title" type="text" maxlength="60" placeholder="e.g. Blue Boat earphones case" autocomplete="off">
+        <p class="err" data-err="title"></p>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label for="f-location"><span id="locLabel">Where did you lose it?</span> <em>*</em></label>
+          <select id="f-location" name="location"></select>
+          <p class="err" data-err="location"></p>
+        </div>
+        <div class="field">
+          <label for="f-date">Date <em>*</em></label>
+          <input id="f-date" name="date" type="date">
+          <p class="err" data-err="date"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-desc">Helpful details <em>*</em> <span class="count" id="descCount">0 / 240</span></label>
+        <textarea id="f-desc" name="desc" rows="3" maxlength="240" placeholder="Colour, brand, size, stickers, scratches, what is inside…"></textarea>
+        <p class="err" data-err="desc"></p>
+      </div>
+
+      <div class="field verify-field" id="verifyField" hidden>
+        <label for="f-verify">Verification question <span class="muted">(optional, recommended)</span></label>
+        <input id="f-verify" name="verify" type="text" maxlength="80" placeholder="e.g. What sticker is on the back?">
+        <label for="f-answer" class="sr">Answer to the verification question</label>
+        <input id="f-answer" name="answer" type="text" maxlength="60" placeholder="Correct answer (used to check claimants)">
+        <p class="hint">Only the real owner should know the answer. It helps you check a claim before handing the item over.</p>
+        <p class="err" data-err="answer"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-contact">Contact for handover (email or phone) <em>*</em></label>
+        <input id="f-contact" name="contact" type="text" maxlength="60" placeholder="name@rvu.edu.in or 98xxxxxxxx" autocomplete="off">
+        <p class="hint" id="postingAs"></p>
+        <p class="hint">Hidden from the public. It is shown only to the poster and to people who pass the verification step.</p>
+        <p class="err" data-err="contact"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-photo">Photo <span class="muted">(optional, resized automatically)</span></label>
+        <input id="f-photo" name="photo" type="file" accept="image/*">
+        <div class="photo-prev" id="photoPrev" hidden><img alt="Selected photo preview"><button type="button" class="linklike" id="photoClear">Remove photo</button></div>
+        <p class="err" data-err="photo"></p>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary">Submit report</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Item detail dialog -->
+<dialog id="itemDlg" aria-labelledby="itemTitle"><div id="itemBody"></div></dialog>
+
+<!-- Log in / sign up dialog -->
+<dialog id="authDlg" aria-labelledby="authTitle">
+  <form id="authForm" novalidate>
+    <div class="dlg-head"><h2 id="authTitle">Log in</h2><button type="button" class="icon-btn" data-close aria-label="Close">✕</button></div>
+    <div class="dlg-body">
+      <div class="tabs" role="group" aria-label="Log in or sign up">
+        <button type="button" data-auth-tab="login" aria-pressed="true">Log in</button>
+        <button type="button" data-auth-tab="register" aria-pressed="false">Sign up</button>
+      </div>
+      <div class="field reg-only" hidden><label for="a-name">Full name</label><input id="a-name" name="name" type="text" maxlength="40" autocomplete="name"><p class="err" data-err="name"></p></div>
+      <div class="field"><label for="a-email">Email</label><input id="a-email" name="email" type="text" maxlength="80" autocomplete="email" placeholder="name@rvu.edu.in"><p class="err" data-err="email"></p></div>
+      <div class="field"><label for="a-pass">Password</label><input id="a-pass" name="password" type="password" maxlength="72" autocomplete="current-password"><p class="hint reg-only" hidden>At least 8 characters, with a letter and a number.</p><p class="err" data-err="password"></p></div>
+      <div class="field reg-only" hidden><label for="a-role">You are a</label><select id="a-role" name="role"><option>Student</option><option>Faculty</option><option>Staff</option></select><p class="err" data-err="role"></p></div>
+      <p class="err" id="authErr"></p>
+      <p class="hint" id="demoHint">Try the demo account <b>student@rvu.edu.in</b> with password <b>Demo@1234</b>.</p>
+    </div>
+    <div class="dlg-foot"><button type="button" class="btn btn-ghost" data-close>Cancel</button><button type="submit" class="btn btn-primary" id="authSubmit">Log in</button></div>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
